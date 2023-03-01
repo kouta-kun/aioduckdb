@@ -1,13 +1,20 @@
 import duckdb
 from typing import Any, AsyncIterator, Iterable, Optional, Tuple, TYPE_CHECKING, Union
 
+# in DuckDB <0.7.0 there was a separate type, DuckDBPyResult, for a result.
+# In >=0.7.0, that was removed, there is only DuckDBPyConnection
+try:
+    from duckdb import DuckDBPyResult as DuckDBResult
+except ImportError:
+    from duckdb import DuckDBPyConnection as DuckDBResult
+
 if TYPE_CHECKING:
     from .core import Connection
     import pyarrow
     import pandas
 
 class Result:
-    def __init__(self, conn: "Connection", result: duckdb.DuckDBPyResult) -> None:
+    def __init__(self, conn: "Connection", result: DuckDBResult) -> None:
         self.result = result
         self._conn = conn
 

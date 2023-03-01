@@ -9,6 +9,7 @@ author-email = "darkfm@vera.com.uy"
 description-file = "README.rst"
 home-page = "https://github.com/kouta-kun/aioduckdb"
 requires = [
+    "duckdb",
     "typing_extensions >= 4.0; python_version < '3.8'",
 ]
 requires-python = ">=3.6"
