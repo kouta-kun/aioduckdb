@@ -175,9 +175,11 @@ class Connection(Thread):
         return Cursor(self, await self._execute(self._conn.cursor))
 
     @contextmanager
-    async def query(self, query: str, alias: str = 'query_relation') -> Relation:
+    async def query(self, query: str, alias: str = 'query_relation', parameters: Optional[Iterable[Any]] = None) -> Relation:
         """Create an aioduckdb relation wrapping a duckdb PyRelation object"""
-        return Relation(self, await self._execute(self._conn.query, query, alias=alias))
+        if parameters is None:
+            parameters = []
+        return Relation(self, await self._execute(self._conn.query, query, alias=alias, params=parameters))
 
     @contextmanager
     async def table(self, table_name: str) -> Relation:
@@ -208,7 +210,7 @@ class Connection(Thread):
             self._connection = None
 
     @contextmanager
-    async def execute(self, sql: str, parameters: Iterable[Any] = None) -> Cursor:
+    async def execute(self, sql: str, parameters: Optional[Iterable[Any]] = None) -> Cursor:
         """Helper to create a cursor and execute the given query.
         Huge warning: this function does not copy over registered objects and such. If you need those,
         use execute_on_self or as_cursor
@@ -220,7 +222,7 @@ class Connection(Thread):
         return cursor
 
     @contextmanager
-    async def execute_on_self(self, sql: str, parameters: Iterable[Any] = None) -> Cursor:
+    async def execute_on_self(self, sql: str, parameters: Optional[Iterable[Any]] = None) -> Cursor:
         """Function to execute the given query on this connection and cast it to a cursor."""
         if parameters is None:
             parameters = []
